@@ -113,6 +113,11 @@ var identities=[
   {key:"city",icon:"🌍",label:"区域城市",cls:"c8"},
   {key:"dabu",icon:"🏢",label:"大部报名",cls:"c9"}
 ];
+var whitelists={
+  galaxy:["1000046421","20344817","1000761282","31306692","30297510","1000416714","1000380183","1009840015","1001831077","1000235760","1000350543","1003463154","2100819270","30011877","30740645","2101519408","1000200021","1009840960","1000244751","1009857430","1000488526","1000416706","2101512323","1009726435","30851697","2101312723","20376001","1004563776","1001318662","2101519907","1000376364","1003475600","1000331086","2101093380","1000416911","1000456238","1000086302","30738729","1000341493","1000279231","1000012962","1002313769","1009796135","1001316741","1009842867","2101322942","1005191946","1000252156","1000416186","1000261764","1000300760","1003155197","2101451514","1000503625","1001243579","1005702910","1009858422","1009699842","1000165454","1000214130","1004696520","1000019261","1009905787","1003571114","2100303455","1008717192","1000108512","2100182056","1000014272","31347081","1009937757","1001576860","1000400021","31387750","20278220","1000416753","1003350392","1008694868","1001576863","1000003167"],
+  expand:["26620468","2101486848","2100962193","2101002686","1000323001","1000380815","2101351517","2101135585","30805929","2100308880","1000241614","2100970937","1000949020","2101490641","2101341682","1000180729","2100974047","2100120045","1000166943","1002832842","1002123751","2100840672","1007021817","1000102781"],
+  kos:["1001665483","1002705432","1000055710","20134009","2100423848","1001454263","30448195","2100342896","2100478040","1001550173","1001075483","2101185339","1009704010","1000181984","31541944","1000375706"]
+};
 var brandOpts=["链家","世纪宏图","21世纪","高邦","百居易","欢家居","爱享家","住商","邦房","德佑","中环","乐远-佳美嘉","乐远-乐之家","乐远-楚汉大智"];
 var lianjiaDaqu=["CBD大区","常青大区","江岸中心大区","沿江大区","汉阳大区","南湖大区","南三环大区","武昌滨江大区","高新大区","光谷大区"];
 var otherDaqu=["东西湖区","汉口区","汉口中心区","后湖区","江汉区","北三环区","汉阳中心区","汉阳新城区","汉阳环城区","黄家湖区","南湖区","汉阳区","光谷区","武昌滨江区","青山区","武昌区","雄楚区","江夏区","鄂黄区"];
@@ -151,7 +156,70 @@ function renderHome(){
 
 function goForm(key){
   selId=identities.filter(function(i){return i.key===key})[0];
-  renderForm();
+  if(whitelists[selId.key]){
+    renderVerify();
+  }else{
+    renderNotReady();
+  }
+}
+
+function renderVerify(){
+  var it=selId;
+  app.innerHTML=
+    '<div class="form-view active">'+
+      '<div class="form-top">'+
+        '<div class="back" onclick="renderHome()">‹</div>'+
+        '<div class="ftitle"><h2>身份验证</h2><div class="tag">'+it.icon+' '+it.label+'</div></div>'+
+      '</div>'+
+      '<div class="form-body">'+
+        '<div class="f-card">'+
+          '<div class="f-row"><label>🆔 请输入工号<span class="req">*</span></label><input type="text" id="verify_gh" placeholder="请输入工号" onkeydown="if(event.key===\'Enter\')verifyGh()"></div>'+
+          '<div id="verify_msg" style="font-size:12px;margin-top:6px;display:none"></div>'+
+        '</div>'+
+        '<button class="submit-btn" onclick="verifyGh()" style="margin-top:8px">验证并进入报名</button>'+
+      '</div>'+
+    '</div>'+footer();
+  window.scrollTo(0,0);
+  var inp=document.getElementById("verify_gh");
+  if(inp)inp.focus();
+}
+
+function verifyGh(){
+  var gh=document.getElementById("verify_gh").value.trim();
+  var msg=document.getElementById("verify_msg");
+  if(!gh){
+    msg.style.display="block";
+    msg.style.color="#e8455c";
+    msg.textContent="请输入工号";
+    return;
+  }
+  var list=whitelists[selId.key];
+  if(list.indexOf(gh)>-1){
+    renderForm();
+  }else{
+    msg.style.display="block";
+    msg.style.color="#e8455c";
+    msg.textContent="⚠ 您的工号不在"+selId.label+"名单中，请选择其他入口";
+  }
+}
+
+function renderNotReady(){
+  var it=selId;
+  app.innerHTML=
+    '<div class="form-view active">'+
+      '<div class="form-top">'+
+        '<div class="back" onclick="renderHome()">‹</div>'+
+        '<div class="ftitle"><h2>名单确认中</h2><div class="tag">'+it.icon+' '+it.label+'</div></div>'+
+      '</div>'+
+      '<div class="form-body">'+
+        '<div class="f-card" style="text-align:center;padding:30px 16px">'+
+          '<div style="font-size:40px;margin-bottom:12px">⏳</div>'+
+          '<div style="font-size:14px;color:#666">该入口名单确认中，暂未开放报名</div>'+
+          '<div style="font-size:12px;color:#aaa;margin-top:6px">请稍后再试或联系主办方</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+footer();
+  window.scrollTo(0,0);
 }
 
 function renderForm(){
