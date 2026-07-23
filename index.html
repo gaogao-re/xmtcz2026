@@ -43,6 +43,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 .c6 .ico{background:#eaf0ff;color:#2c6cff}
 .c7 .ico{background:#fff8e8;color:#f5a300}
 .c8 .ico{background:#e8f8f6;color:#00a8a8}
+.c9 .ico{background:#f0f0fa;color:#5555cc}
 
 /* ===== Form ===== */
 .form-view{display:none}
@@ -101,6 +102,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 <body>
 <div id="app"></div>
 <script>
+var identities=[
+  {key:"galaxy",icon:"🌟",label:"银河达人",cls:"c1"},
+  {key:"expand",icon:"🚀",label:"扩展营达人",cls:"c2"},
+  {key:"kos",icon:"📱",label:"小红书KOS",cls:"c3"},
+  {key:"star",icon:"⭐",label:"高星店东",cls:"c4"},
+  {key:"aimkt",icon:"🧠",label:"AI营销号",cls:"c5"},
+  {key:"aicircle",icon:"🏠",label:"AI商圈号",cls:"c6"},
+  {key:"brand",icon:"🎯",label:"品牌主",cls:"c7"},
+  {key:"city",icon:"🌍",label:"区域城市",cls:"c8"},
+  {key:"dabu",icon:"🏢",label:"大部报名",cls:"c9"}
+];
 var brandOpts=["链家","世纪宏图","21世纪","高邦","百居易","欢家居","爱享家","住商","邦房","德佑","中环","乐远-佳美嘉","乐远-乐之家","乐远-楚汉大智"];
 var lianjiaDaqu=["CBD大区","常青大区","江岸中心大区","沿江大区","汉阳大区","南湖大区","南三环大区","武昌滨江大区","高新大区","光谷大区"];
 var otherDaqu=["东西湖区","汉口区","汉口中心区","后湖区","江汉区","北三环区","汉阳中心区","汉阳新城区","汉阳环城区","黄家湖区","南湖区","汉阳区","光谷区","武昌滨江区","青山区","武昌区","雄楚区","江夏区","鄂黄区"];
@@ -111,11 +123,16 @@ var app=document.getElementById("app");
 
 function footer(){return '<div class="footer"><div class="f1">\u6280\u672F\u652F\u6301 gaojie097@ke.com</div><div class="f2">\u5BF9\u5916\u5173\u7CFB\u4E2D\u5FC3</div></div>'}
 
+var selId=null;
+
 function renderHome(){
-  var brandOptsHtml=brandOpts.map(function(b){return '<option>'+b+'</option>'}).join("");
-  var identityOptsHtml=identityOpts.map(function(i){return '<option>'+i+'</option>'}).join("");
-  var timeOptsHtml=timeOpts.map(function(t){return '<option>'+t+'</option>'}).join("");
-  var accountChecksHtml=accountOpts.map(function(a){return '<label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="'+a+'" style="display:none">'+a+'</label>'}).join("");
+  var cards=identities.map(function(it){
+    return '<div class="id-card '+it.cls+'" onclick="goForm(\''+it.key+'\')">'+
+      '<div class="ico">'+it.icon+'</div>'+
+      '<div class="name">'+it.label+'</div>'+
+      '<div class="arrow">›</div>'+
+    '</div>'
+  }).join("");
   app.innerHTML=
     '<div class="hero">'+
       '<div class="main-title">智创2026</div>'+
@@ -126,29 +143,51 @@ function renderHome(){
         '<div class="info-row"><span class="ico">📍</span> 楚世家华庭酒店 · 三层 · 东湖厅</div>'+
       '</div>'+
     '</div>'+
-    '<div class="section-label"><span class="dot"></span>报名登记</div>'+
-    '<div class="form-body">'+
-      '<div class="f-card">'+
-        '<div class="f-row"><label>1. 姓名<span class="req">*</span></label><input type="text" id="f_name" placeholder="请输入姓名"></div>'+
-        '<div class="f-row"><label>2. 工号<span class="req">*</span></label><input type="text" id="f_gh" placeholder="请输入工号" onblur="checkGh(this)"><div class="tip">每人仅可报名一次，请确认工号无误</div><div id="gh_msg" style="font-size:11px;margin-top:3px;display:none"></div></div>'+
+    '<div class="section-label"><span class="dot"></span>请选择您的报名入口</div>'+
+    '<div class="id-grid">'+cards+'</div>'+
+    footer();
+  window.scrollTo(0,0);
+}
+
+function goForm(key){
+  selId=identities.filter(function(i){return i.key===key})[0];
+  renderForm();
+}
+
+function renderForm(){
+  var it=selId;
+  var brandOptsHtml=brandOpts.map(function(b){return '<option>'+b+'</option>'}).join("");
+  var identityOptsHtml=identityOpts.map(function(i){return '<option>'+i+'</option>'}).join("");
+  var timeOptsHtml=timeOpts.map(function(t){return '<option>'+t+'</option>'}).join("");
+  var accountChecksHtml=accountOpts.map(function(a){return '<label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="'+a+'" style="display:none">'+a+'</label>'}).join("");
+  app.innerHTML=
+    '<div class="form-view active">'+
+      '<div class="form-top">'+
+        '<div class="back" onclick="renderHome()">‹</div>'+
+        '<div class="ftitle"><h2>报名登记</h2><div class="tag">'+it.icon+' '+it.label+'</div></div>'+
       '</div>'+
-      '<div class="f-card">'+
-        '<div class="f-row"><label>3. 品牌<span class="req">*</span></label><select id="f_brand" onchange="updateDaqu()"><option value="">请选择品牌</option>'+brandOptsHtml+'</select></div>'+
-        '<div class="f-row"><label>4. 大区<span class="req">*</span></label><select id="f_dq"><option value="">请先选择品牌</option></select></div>'+
-        '<div class="f-row"><label>5. 身份<span class="req">*</span></label><select id="f_identity"><option value="">请选择身份</option>'+identityOptsHtml+'</select></div>'+
+      '<div class="form-body">'+
+        '<div class="f-card">'+
+          '<div class="f-row"><label>1. 姓名<span class="req">*</span></label><input type="text" id="f_name" placeholder="请输入姓名"></div>'+
+          '<div class="f-row"><label>2. 工号<span class="req">*</span></label><input type="text" id="f_gh" placeholder="请输入工号" onblur="checkGh(this)"><div class="tip">每人仅可报名一次，请确认工号无误</div><div id="gh_msg" style="font-size:11px;margin-top:3px;display:none"></div></div>'+
+        '</div>'+
+        '<div class="f-card">'+
+          '<div class="f-row"><label>3. 品牌<span class="req">*</span></label><select id="f_brand" onchange="updateDaqu()"><option value="">请选择品牌</option>'+brandOptsHtml+'</select></div>'+
+          '<div class="f-row"><label>4. 大区<span class="req">*</span></label><select id="f_dq"><option value="">请先选择品牌</option></select></div>'+
+          '<div class="f-row"><label>5. 身份<span class="req">*</span></label><select id="f_identity"><option value="">请选择身份</option>'+identityOptsHtml+'</select></div>'+
+        '</div>'+
+        '<div class="f-card">'+
+          '<div class="f-row"><label>6. 新媒体账号<span class="req">*</span></label><div class="checks" id="f_accounts">'+accountChecksHtml+'</div><div class="tip">可多选</div></div>'+
+          '<div class="f-row"><label>7. 月均商机数</label><input type="number" id="f_leads" placeholder="如：50"></div>'+
+          '<div class="f-row"><label>8. 账号粉丝</label><input type="number" id="f_fans" placeholder="如：5000"></div>'+
+        '</div>'+
+        '<div class="f-card">'+
+          '<div class="f-row"><label>9. 新媒体运营时间<span class="req">*</span></label><select id="f_time"><option value="">请选择</option>'+timeOptsHtml+'</select></div>'+
+          '<div class="f-row"><label>10. 感兴趣的课程</label><textarea id="f_course" placeholder="请填写您感兴趣的课程..."></textarea></div>'+
+        '</div>'+
       '</div>'+
-      '<div class="f-card">'+
-        '<div class="f-row"><label>6. 新媒体账号<span class="req">*</span></label><div class="checks" id="f_accounts">'+accountChecksHtml+'</div><div class="tip">可多选</div></div>'+
-        '<div class="f-row"><label>7. 月均商机数</label><input type="number" id="f_leads" placeholder="如：50"></div>'+
-        '<div class="f-row"><label>8. 账号粉丝</label><input type="number" id="f_fans" placeholder="如：5000"></div>'+
-      '</div>'+
-      '<div class="f-card">'+
-        '<div class="f-row"><label>9. 新媒体运营时间<span class="req">*</span></label><select id="f_time"><option value="">请选择</option>'+timeOptsHtml+'</select></div>'+
-        '<div class="f-row"><label>10. 感兴趣的课程</label><textarea id="f_course" placeholder="请填写您感兴趣的课程..."></textarea></div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="submit-wrap"><button class="submit-btn" onclick="submit()">提交报名</button></div>'+
-  footer();
+      '<div class="submit-wrap"><button class="submit-btn" onclick="submit()">提交报名</button></div>'+
+    '</div>'+footer();
   window.scrollTo(0,0);
 }
 
@@ -190,6 +229,7 @@ function checkGh(input){
 
 function submit(){
   var d={
+    entry:selId.label,
     name:v("f_name"),
     gh:v("f_gh"),
     brand:v("f_brand"),
@@ -218,6 +258,7 @@ function submit(){
   var payload={
     access_key:"78684d7a-6c3a-4c71-82ee-b6a0546d73b7",
     from_name:"智创2026报名",
+    "报名入口":d.entry,
     "姓名":d.name,
     "工号":d.gh,
     "品牌":d.brand,
@@ -250,6 +291,7 @@ function renderSuccess(d){
       '</div>'+
       '<div class="s-body">'+
         '<div class="s-card">'+
+          '<div class="s-row"><span class="k">报名入口</span><span class="v">'+d.entry+'</span></div>'+
           '<div class="s-row"><span class="k">姓名</span><span class="v">'+d.name+'</span></div>'+
           '<div class="s-row"><span class="k">工号</span><span class="v">'+d.gh+'</span></div>'+
           '<div class="s-row"><span class="k">品牌</span><span class="v">'+d.brand+'</span></div>'+
