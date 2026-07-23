@@ -67,6 +67,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 .f-row .tip{font-size:11px;color:#bbb;margin-top:3px}
 .f-row select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23aaa' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
 .f-row input[readonly]{background:#f3f4f7;color:#888}
+.f-row .checks{display:flex;flex-wrap:wrap;gap:8px}
+.f-row .check-item{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:400;color:#2d2d2d;cursor:pointer;background:#fafbfc;border:1.5px solid #eceef2;border-radius:8px;padding:8px 14px;transition:all .15s}
+.f-row .check-item:active{transform:scale(.95)}
+.f-row .check-item.checked{background:#eaf3fc;border-color:#1a4580;color:#1a4580}
 
 /* ===== Submit ===== */
 .submit-wrap{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:#fff;border-top:1px solid #f0f0f0;padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
@@ -97,80 +101,73 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 <body>
 <div id="app"></div>
 <script>
-var identities=[
-  {key:"galaxy",icon:"\u{1F31F}",label:"\u94F6\u6CB3\u8FBE\u4EBA",desc:"\u94F6\u6CB3\u8BA1\u5212\u8FBE\u4EBA",cls:"c1"},
-  {key:"expand",icon:"\u{1F680}",label:"\u6269\u5C55\u8425\u8FBE\u4EBA",desc:"\u6269\u5C55\u8425\u8BA1\u5212",cls:"c2"},
-  {key:"kos",icon:"\u{1F4F1}",label:"\u5C0F\u7EA2\u4E66KOS",desc:"\u5C0F\u7EA2\u4E66KOS\u8D26\u53F7",cls:"c3"},
-  {key:"star",icon:"\u2B50",label:"\u9AD8\u661F\u95E8\u5E97",desc:"\u9AD8\u661F\u7EA7\u95E8\u5E97",cls:"c4"},
-  {key:"aimkt",icon:"\u{1F9E0}",label:"AI\u8425\u9500\u53F7",desc:"AI\u8425\u9500\u53F7\u8D26\u53F7",cls:"c5"},
-  {key:"aicircle",icon:"\u{1F3E0}",label:"AI\u5546\u5708\u53F7",desc:"AI\u5546\u5708\u53F7\u8D26\u53F7",cls:"c6"},
-  {key:"brand",icon:"\u{1F3AF}",label:"\u54C1\u724C\u4E3B",desc:"\u54C1\u724C\u65B9\u4EE3\u8868",cls:"c7"},
-  {key:"city",icon:"\u{1F30D}",label:"\u533A\u57DF\u57CE\u5E02",desc:"\u533A\u57DF/\u57CE\u5E02\u4EE3\u8868",cls:"c8"}
-];
-var daquOpts=["\u540E\u6E56\u5927\u533A","\u6C49\u53E3\u5317\u5927\u533A","\u6C49\u53E3\u5357\u5927\u533A","\u6C49\u9633\u5927\u533A","\u6B66\u660C\u5927\u533A","\u6B66\u660C\u5357\u5927\u533A","\u5149\u8C37\u5927\u533A","\u5176\u4ED6"];
-var timeOpts=["\u4E0D\u52301\u4E2A\u6708","1-3\u4E2A\u6708","3-6\u4E2A\u6708","6-12\u4E2A\u6708","1-2\u5E74","2\u5E74\u4EE5\u4E0A"];
-var selId=null;
+var brandOpts=["链家","世纪宏图","21世纪","高邦","百居易","欢家居","爱享家","住商","邦房","德佑","中环","乐远-佳美嘉","乐远-乐之家","乐远-楚汉大智"];
+var lianjiaDaqu=["CBD大区","常青大区","江岸中心大区","沿江大区","汉阳大区","南湖大区","南三环大区","武昌滨江大区","高新大区","光谷大区"];
+var otherDaqu=["东西湖区","汉口区","汉口中心区","后湖区","江汉区","北三环区","汉阳中心区","汉阳新城区","汉阳环城区","黄家湖区","南湖区","汉阳区","光谷区","武昌滨江区","青山区","武昌区","雄楚区","江夏区","鄂黄区"];
+var identityOpts=["品牌主","店东","经纪人","圈经","其他"];
+var accountOpts=["小红书","抖音","视频号","其他"];
+var timeOpts=["不到半年","半年到1年","1年-2年","2年以上"];
 var app=document.getElementById("app");
 
 function footer(){return '<div class="footer"><div class="f1">\u6280\u672F\u652F\u6301 gaojie097@ke.com</div><div class="f2">\u5BF9\u5916\u5173\u7CFB\u4E2D\u5FC3</div></div>'}
 
 function renderHome(){
-  var cards=identities.map(function(it){
-    return '<div class="id-card '+it.cls+'" onclick="goForm(\''+it.key+'\')">'+
-      '<div class="ico">'+it.icon+'</div>'+
-      '<div class="name">'+it.label+'</div>'+
-      '<div class="sub">'+it.desc+'</div>'+
-      '<div class="arrow">\u203a</div>'+
-    '</div>'
-  }).join("");
+  var brandOptsHtml=brandOpts.map(function(b){return '<option>'+b+'</option>'}).join("");
+  var identityOptsHtml=identityOpts.map(function(i){return '<option>'+i+'</option>'}).join("");
+  var timeOptsHtml=timeOpts.map(function(t){return '<option>'+t+'</option>'}).join("");
+  var accountChecksHtml=accountOpts.map(function(a){return '<label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="'+a+'" style="display:none">'+a+'</label>'}).join("");
   app.innerHTML=
     '<div class="hero">'+
-      '<div class="main-title">\u667A\u521B2026</div>'+
-      '<div class="sub-title">\u623F\u4EA7\u65B0\u5A92\u4F53\u9886\u822A\u8005\u5CF0\u4F1A</div>'+
+      '<div class="main-title">智创2026</div>'+
+      '<div class="sub-title">房产新媒体领航者峰会</div>'+
       '<div class="line"></div>'+
       '<div class="info">'+
-        '<div class="info-row"><span class="ico">\u{1F4C5}</span> 2026\u5E748\u670818\u65E5-19\u65E5</div>'+
-        '<div class="info-row"><span class="ico">\u{1F4CD}</span> \u695A\u4E16\u5BB6\u534E\u5EAD\u9152\u5E97 \u00B7 \u4E09\u5C42 \u00B7 \u4E1C\u6E56\u5385</div>'+
+        '<div class="info-row"><span class="ico">📅</span> 2026年8月18日-19日</div>'+
+        '<div class="info-row"><span class="ico">📍</span> 楚世家华庭酒店 · 三层 · 东湖厅</div>'+
       '</div>'+
     '</div>'+
-    '<div class="section-label"><span class="dot"></span>\u8BF7\u9009\u62E9\u60A8\u7684\u8EAB\u4EFD</div>'+
-    '<div class="id-grid">'+cards+'</div>'+
-    footer();
+    '<div class="section-label"><span class="dot"></span>报名登记</div>'+
+    '<div class="form-body">'+
+      '<div class="f-card">'+
+        '<div class="f-row"><label>1. 姓名<span class="req">*</span></label><input type="text" id="f_name" placeholder="请输入姓名"></div>'+
+        '<div class="f-row"><label>2. 工号<span class="req">*</span></label><input type="text" id="f_gh" placeholder="请输入工号" onblur="checkGh(this)"><div class="tip">每人仅可报名一次，请确认工号无误</div><div id="gh_msg" style="font-size:11px;margin-top:3px;display:none"></div></div>'+
+      '</div>'+
+      '<div class="f-card">'+
+        '<div class="f-row"><label>3. 品牌<span class="req">*</span></label><select id="f_brand" onchange="updateDaqu()"><option value="">请选择品牌</option>'+brandOptsHtml+'</select></div>'+
+        '<div class="f-row"><label>4. 大区<span class="req">*</span></label><select id="f_dq"><option value="">请先选择品牌</option></select></div>'+
+        '<div class="f-row"><label>5. 身份<span class="req">*</span></label><select id="f_identity"><option value="">请选择身份</option>'+identityOptsHtml+'</select></div>'+
+      '</div>'+
+      '<div class="f-card">'+
+        '<div class="f-row"><label>6. 新媒体账号<span class="req">*</span></label><div class="checks" id="f_accounts">'+accountChecksHtml+'</div><div class="tip">可多选</div></div>'+
+        '<div class="f-row"><label>7. 月均商机数</label><input type="number" id="f_leads" placeholder="如：50"></div>'+
+        '<div class="f-row"><label>8. 账号粉丝</label><input type="number" id="f_fans" placeholder="如：5000"></div>'+
+      '</div>'+
+      '<div class="f-card">'+
+        '<div class="f-row"><label>9. 新媒体运营时间<span class="req">*</span></label><select id="f_time"><option value="">请选择</option>'+timeOptsHtml+'</select></div>'+
+        '<div class="f-row"><label>10. 感兴趣的课程</label><textarea id="f_course" placeholder="请填写您感兴趣的课程..."></textarea></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="submit-wrap"><button class="submit-btn" onclick="submit()">提交报名</button></div>'+
+  footer();
   window.scrollTo(0,0);
 }
 
-function goForm(key){
-  selId=identities.filter(function(i){return i.key===key})[0];
-  renderForm();
+function updateDaqu(){
+  var brand=document.getElementById("f_brand");
+  var dq=document.getElementById("f_dq");
+  var opts=brand.value==="链家"?lianjiaDaqu:otherDaqu;
+  dq.innerHTML='<option value="">请选择大区</option>'+opts.map(function(d){return '<option>'+d+'</option>'}).join("");
 }
 
-function renderForm(){
-  var it=selId;
-  app.innerHTML=
-    '<div class="form-view active">'+
-      '<div class="form-top">'+
-        '<div class="back" onclick="renderHome()">\u2039</div>'+
-        '<div class="ftitle"><h2>\u62A5\u540D\u767B\u8BB0</h2><div class="tag">'+it.icon+' '+it.label+'</div></div>'+
-      '</div>'+
-      '<div class="form-body">'+
-        '<div class="f-card">'+
-          '<div class="f-row"><label>\u{1F464} \u59D3\u540D<span class="req">*</span></label><input type="text" id="f_name" placeholder="\u8BF7\u8F93\u5165\u59D3\u540D"></div>'+
-          '<div class="f-row"><label>\u{1F194} \u5DE5\u53F7<span class="req">*</span></label><input type="text" id="f_gh" placeholder="\u8BF7\u8F93\u5165\u5DE5\u53F7" onblur="checkGh(this)"><div class="tip">\u6BCF\u4EBA\u4EC5\u53EF\u62A5\u540D\u4E00\u6B21\uFF0C\u8BF7\u786E\u8BA4\u5DE5\u53F7\u65E0\u8BEF</div><div id="gh_msg" style="font-size:11px;margin-top:3px;display:none"></div></div>'+
-          '<div class="f-row"><label>\u{1F30D} \u5927\u533A<span class="req">*</span></label><select id="f_dq"><option value="">\u8BF7\u9009\u62E9\u5927\u533A</option>'+daquOpts.map(function(d){return '<option>'+d+'</option>'}).join("")+'</select></div>'+
-          '<div class="f-row"><label>\u{1F3AF} \u8EAB\u4EFD<span class="req">*</span></label><input type="text" value="'+it.label+'" readonly></div>'+
-        '</div>'+
-        '<div class="f-card">'+
-          '<div class="f-row"><label>\u{1F4F1} \u65B0\u5A92\u4F53\u8D26\u53F7<span class="req">*</span></label><input type="text" id="f_ac" placeholder="\u5982\uFF1A\u5854\u5B50\u6E56\u751F\u6D3B\u5708"><div class="tip">\u5C0F\u7EA2\u4E66/\u6296\u97F3\u7B49\u8D26\u53F7\u540D\u79F0</div></div>'+
-          '<div class="f-row"><label>\u{1F465} \u7C89\u4E1D\u6570<span class="req">*</span></label><input type="number" id="f_fans" placeholder="\u5982\uFF1A5000"></div>'+
-          '<div class="f-row"><label>\u{23F1} \u505A\u65B0\u5A92\u4F53\u65F6\u95F4<span class="req">*</span></label><select id="f_tm"><option value="">\u8BF7\u9009\u62E9</option>'+timeOpts.map(function(t){return '<option>'+t+'</option>'}).join("")+'</select></div>'+
-        '</div>'+
-        '<div class="f-card">'+
-          '<div class="f-row"><label>\u{1F4DD} \u5E0C\u671B\u5927\u4F1A\u80FD\u5B66\u5230\u4EC0\u4E48</label><textarea id="f_ex" placeholder="\u8BF7\u586B\u5199\u60A8\u7684\u671F\u671B\u548C\u9700\u6C42..."></textarea></div>'+
-        '</div>'+
-      '</div>'+
-      '<div class="submit-wrap"><button class="submit-btn" onclick="submit()">\u63D0\u4EA4\u62A5\u540D</button></div>'+
-    '</div>'+footer();
-  window.scrollTo(0,0);
+function toggleCheck(el){
+  el.classList.toggle("checked");
+  var cb=el.querySelector("input");
+  cb.checked=el.classList.contains("checked");
+}
+
+function getCheckedAccounts(){
+  var checked=document.querySelectorAll("#f_accounts .checked");
+  return Array.prototype.map.call(checked,function(el){return el.querySelector("input").value}).join("、");
 }
 
 function v(id){var e=document.getElementById(id);return e?e.value.trim():""}
@@ -192,17 +189,28 @@ function checkGh(input){
 }
 
 function submit(){
-  var d={identity:selId.label,name:v("f_name"),gh:v("f_gh"),dq:v("f_dq"),account:v("f_ac"),fans:v("f_fans"),experience:v("f_tm"),expectation:v("f_ex")};
-  if(!d.name||!d.gh||!d.dq||!d.account||!d.fans||!d.experience){alert("\u8BF7\u586B\u5199\u5FC5\u586B\u9879");return}
+  var d={
+    name:v("f_name"),
+    gh:v("f_gh"),
+    brand:v("f_brand"),
+    dq:v("f_dq"),
+    identity:v("f_identity"),
+    accounts:getCheckedAccounts(),
+    leads:v("f_leads"),
+    fans:v("f_fans"),
+    time:v("f_time"),
+    course:v("f_course")
+  };
+  if(!d.name||!d.gh||!d.brand||!d.dq||!d.identity||!d.accounts||!d.time){alert("请填写必填项");return}
 
   var registered=JSON.parse(localStorage.getItem("xmtcz_registered")||"[]");
   if(registered.indexOf(d.gh)>-1){
-    alert("\u8BE5\u5DE5\u53F7\u5DF2\u62A5\u540D\uFF0C\u65E0\u9700\u91CD\u590D\u586B\u5199");
+    alert("该工号已报名，无需重复填写");
     return;
   }
 
   var btn=document.querySelector(".submit-btn");
-  if(btn){btn.disabled=true;btn.textContent="\u63D0\u4EA4\u4E2D...";}
+  if(btn){btn.disabled=true;btn.textContent="提交中...";}
 
   registered.push(d.gh);
   localStorage.setItem("xmtcz_registered",JSON.stringify(registered));
@@ -210,14 +218,16 @@ function submit(){
   var payload={
     access_key:"78684d7a-6c3a-4c71-82ee-b6a0546d73b7",
     from_name:"智创2026报名",
-    "\u59D3\u540D":d.name,
-    "\u5DE5\u53F7":d.gh,
-    "\u5927\u533A":d.dq,
-    "\u8EAB\u4EFD":d.identity,
-    "\u65B0\u5A92\u4F53\u8D26\u53F7":d.account,
-    "\u7C89\u4E1D\u6570":d.fans,
-    "\u505A\u65B0\u5A92\u4F53\u65F6\u95F4":d.experience,
-    "\u5B66\u4E60\u671F\u671B":d.expectation||"\u65E0"
+    "姓名":d.name,
+    "工号":d.gh,
+    "品牌":d.brand,
+    "大区":d.dq,
+    "身份":d.identity,
+    "新媒体账号":d.accounts,
+    "月均商机数":d.leads||"未填写",
+    "账号粉丝":d.fans||"未填写",
+    "新媒体运营时间":d.time,
+    "感兴趣的课程":d.course||"未填写"
   };
 
   fetch("https://api.web3forms.com/submit",{
@@ -235,21 +245,23 @@ function renderSuccess(d){
     '<div class="success-view active">'+
       '<div class="s-hero">'+
         '<div class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e8c878" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>'+
-        '<h3>\u62A5\u540D\u6210\u529F</h3>'+
-        '<p>\u60A8\u7684\u4FE1\u606F\u5DF2\u6210\u529F\u63D0\u4EA4</p>'+
+        '<h3>报名成功</h3>'+
+        '<p>您的信息已成功提交</p>'+
       '</div>'+
       '<div class="s-body">'+
         '<div class="s-card">'+
-          '<div class="s-row"><span class="k">\u59D3\u540D</span><span class="v">'+d.name+'</span></div>'+
-          '<div class="s-row"><span class="k">\u5DE5\u53F7</span><span class="v">'+d.gh+'</span></div>'+
-          '<div class="s-row"><span class="k">\u5927\u533A</span><span class="v">'+d.dq+'</span></div>'+
-          '<div class="s-row"><span class="k">\u8EAB\u4EFD</span><span class="v">'+d.identity+'</span></div>'+
-          '<div class="s-row"><span class="k">\u65B0\u5A92\u4F53\u8D26\u53F7</span><span class="v">'+d.account+'</span></div>'+
-          '<div class="s-row"><span class="k">\u7C89\u4E1D\u6570</span><span class="v">'+d.fans+'</span></div>'+
-          '<div class="s-row"><span class="k">\u505A\u65B0\u5A92\u4F53\u65F6\u95F4</span><span class="v">'+d.experience+'</span></div>'+
-          (d.expectation?'<div class="s-row"><span class="k">\u5B66\u4E60\u671F\u671B</span><span class="v">'+d.expectation+'</span></div>':'')+
+          '<div class="s-row"><span class="k">姓名</span><span class="v">'+d.name+'</span></div>'+
+          '<div class="s-row"><span class="k">工号</span><span class="v">'+d.gh+'</span></div>'+
+          '<div class="s-row"><span class="k">品牌</span><span class="v">'+d.brand+'</span></div>'+
+          '<div class="s-row"><span class="k">大区</span><span class="v">'+d.dq+'</span></div>'+
+          '<div class="s-row"><span class="k">身份</span><span class="v">'+d.identity+'</span></div>'+
+          '<div class="s-row"><span class="k">新媒体账号</span><span class="v">'+d.accounts+'</span></div>'+
+          (d.leads?'<div class="s-row"><span class="k">月均商机数</span><span class="v">'+d.leads+'</span></div>':'')+
+          (d.fans?'<div class="s-row"><span class="k">账号粉丝</span><span class="v">'+d.fans+'</span></div>':'')+
+          '<div class="s-row"><span class="k">新媒体运营时间</span><span class="v">'+d.time+'</span></div>'+
+          (d.course?'<div class="s-row"><span class="k">感兴趣的课程</span><span class="v">'+d.course+'</span></div>':'')+
         '</div>'+
-        '<div style="margin-top:16px"><button class="submit-btn" style="max-width:200px;margin:0 auto;display:block" onclick="renderHome()">\u8FD4\u56DE\u9996\u9875</button></div>'+
+        '<div style="margin-top:16px"><button class="submit-btn" style="max-width:200px;margin:0 auto;display:block" onclick="renderHome()">返回首页</button></div>'+
       '</div>'+
     '</div>'+footer();
   window.scrollTo(0,0);
