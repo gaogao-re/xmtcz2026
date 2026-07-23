@@ -204,6 +204,9 @@ function submit(){
   var btn=document.querySelector(".submit-btn");
   if(btn){btn.disabled=true;btn.textContent="\u63D0\u4EA4\u4E2D...";}
 
+  registered.push(d.gh);
+  localStorage.setItem("xmtcz_registered",JSON.stringify(registered));
+
   var formData=new FormData();
   formData.append("姓名",d.name);
   formData.append("工号",d.gh);
@@ -220,23 +223,10 @@ function submit(){
   fetch("https://formsubmit.co/ajax/gaojie097@ke.com",{
     method:"POST",
     body:formData
-  })
-  .then(function(r){return r.json()})
-  .then(function(res){
-    if(res.success==="true"||res.success===true){
-      registered.push(d.gh);
-      localStorage.setItem("xmtcz_registered",JSON.stringify(registered));
-      renderSuccess(d);
-    }else{
-      if(btn){btn.disabled=false;btn.textContent="\u63D0\u4EA4\u62A5\u540D";}
-      alert("\u63D0\u4EA4\u5931\u8D25\uFF0C\u8BF7\u91CD\u8BD5");
-    }
-  })
-  .catch(function(e){
-    registered.push(d.gh);
-    localStorage.setItem("xmtcz_registered",JSON.stringify(registered));
-    renderSuccess(d);
-  });
+  }).then(function(){})
+  .catch(function(){});
+
+  renderSuccess(d);
 }
 
 function renderSuccess(d){
