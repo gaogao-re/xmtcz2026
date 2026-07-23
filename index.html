@@ -207,22 +207,23 @@ function submit(){
   registered.push(d.gh);
   localStorage.setItem("xmtcz_registered",JSON.stringify(registered));
 
-  var formData=new FormData();
-  formData.append("姓名",d.name);
-  formData.append("工号",d.gh);
-  formData.append("大区",d.dq);
-  formData.append("身份",d.identity);
-  formData.append("新媒体账号",d.account);
-  formData.append("粉丝数",d.fans);
-  formData.append("做新媒体时间",d.experience);
-  formData.append("学习期望",d.expectation||"\u65E0");
-  formData.append("_subject","\u667A\u521B2026\u62A5\u540D - "+d.identity+" - "+d.name);
-  formData.append("_template","table");
-  formData.append("_captcha","false");
+  var payload={
+    access_key:"78684d7a-6c3a-4c71-82ee-b6a0546d73b7",
+    from_name:"智创2026报名",
+    "\u59D3\u540D":d.name,
+    "\u5DE5\u53F7":d.gh,
+    "\u5927\u533A":d.dq,
+    "\u8EAB\u4EFD":d.identity,
+    "\u65B0\u5A92\u4F53\u8D26\u53F7":d.account,
+    "\u7C89\u4E1D\u6570":d.fans,
+    "\u505A\u65B0\u5A92\u4F53\u65F6\u95F4":d.experience,
+    "\u5B66\u4E60\u671F\u671B":d.expectation||"\u65E0"
+  };
 
-  fetch("https://formsubmit.co/ajax/gaojie097@ke.com",{
+  fetch("https://api.web3forms.com/submit",{
     method:"POST",
-    body:formData
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
   }).then(function(){})
   .catch(function(){});
 
