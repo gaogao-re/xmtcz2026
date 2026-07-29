@@ -72,6 +72,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 .f-row .check-item{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:400;color:#2d2d2d;cursor:pointer;background:#fafbfc;border:1.5px solid #eceef2;border-radius:8px;padding:8px 14px;transition:all .15s}
 .f-row .check-item:active{transform:scale(.95)}
 .f-row .check-item.checked{background:#eaf3fc;border-color:#1a4580;color:#1a4580}
+.req-box{background:rgba(218,165,50,.06);border-left:3px solid #daa520;border-radius:0 8px 8px 0;padding:12px 14px;margin-bottom:10px}
+.req-box .req-title{font-size:12px;font-weight:700;color:#1a4580;margin-bottom:6px}
+.req-box .req-text{font-size:11px;color:#666;line-height:1.7;white-space:pre-line}
 
 /* ===== Submit ===== */
 .submit-wrap{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:#fff;border-top:1px solid #f0f0f0;padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
@@ -103,21 +106,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 <div id="app"></div>
 <script>
 var identities=[
-  {key:"galaxy",icon:"🌟",label:"银河达人",cls:"c1"},
-  {key:"expand",icon:"🚀",label:"扩展营达人",cls:"c2"},
-  {key:"kos",icon:"📱",label:"小红书KOS",cls:"c3"},
-  {key:"star",icon:"⭐",label:"高星店东",cls:"c4"},
-  {key:"aimkt",icon:"🧠",label:"AI营销号",cls:"c5"},
-  {key:"aicircle",icon:"🏠",label:"AI商圈号",cls:"c6"},
-  {key:"brand",icon:"🎯",label:"品牌主",cls:"c7"},
-  {key:"city",icon:"🌍",label:"区域城市",cls:"c8"},
-  {key:"dabu",icon:"🏢",label:"大部报名",cls:"c9"}
+  {key:"galaxy",icon:"🌟",label:"银河达人",cls:"c1",req:"银河达人A/B级（80人）\n银河绑定\n2026年商机量提报/成交提报/粉丝"},
+  {key:"expand",icon:"🚀",label:"扩展营达人",cls:"c2",req:"1、在营内的贝系门店经纪人，且26年上半年探盘次数≥3次\n2、探盘活动中未出现过违规行为，如使用非本人姓名、系统号、1人多号报名，群内有不良舆论等"},
+  {key:"kos",icon:"📱",label:"小红书KOS",cls:"c3",req:"KOS健康分前40+持续付费\n2026年5-6月健康分排名前40名且持续2个月付费运营"},
+  {key:"star",icon:"⭐",label:"高星门店",cls:"c4",req:""},
+  {key:"other",icon:"📝",label:"其他",cls:"c5",req:""}
 ];
-var whitelists={
-  galaxy:["1000046421","20344817","1000761282","31306692","30297510","1000416714","1000380183","1009840015","1001831077","1000235760","1000350543","1003463154","2100819270","30011877","30740645","2101519408","1000200021","1009840960","1000244751","1009857430","1000488526","1000416706","2101512323","1009726435","30851697","2101312723","20376001","1004563776","1001318662","2101519907","1000376364","1003475600","1000331086","2101093380","1000416911","1000456238","1000086302","30738729","1000341493","1000279231","1000012962","1002313769","1009796135","1001316741","1009842867","2101322942","1005191946","1000252156","1000416186","1000261764","1000300760","1003155197","2101451514","1000503625","1001243579","1005702910","1009858422","1009699842","1000165454","1000214130","1004696520","1000019261","1009905787","1003571114","2100303455","1008717192","1000108512","2100182056","1000014272","31347081","1009937757","1001576860","1000400021","31387750","20278220","1000416753","1003350392","1008694868","1001576863","1000003167"],
-  expand:["26620468","2101486848","2100962193","2101002686","1000323001","1000380815","2101351517","2101135585","30805929","2100308880","1000241614","2100970937","1000949020","2101490641","2101341682","1000180729","2100974047","2100120045","1000166943","1002832842","1002123751","2100840672","1007021817","1000102781"],
-  kos:["1001665483","1002705432","1000055710","20134009","2100423848","1001454263","30448195","2100342896","2100478040","1001550173","1001075483","2101185339","1009704010","1000181984","31541944","1000375706"]
-};
 var brandOpts=["链家","世纪宏图","21世纪","高邦","百居易","欢家居","爱享家","住商","邦房","德佑","中环","乐远-佳美嘉","乐远-乐之家","乐远-楚汉大智"];
 var lianjiaDaqu=["CBD大区","常青大区","江岸中心大区","沿江大区","汉阳大区","南湖大区","南三环大区","武昌滨江大区","高新大区","光谷大区"];
 var otherDaqu=["东西湖区","汉口区","汉口中心区","后湖区","江汉区","北三环区","汉阳中心区","汉阳新城区","汉阳环城区","黄家湖区","南湖区","汉阳区","光谷区","武昌滨江区","青山区","武昌区","雄楚区","江夏区","鄂黄区"];
@@ -156,70 +150,7 @@ function renderHome(){
 
 function goForm(key){
   selId=identities.filter(function(i){return i.key===key})[0];
-  if(whitelists[selId.key]){
-    renderVerify();
-  }else{
-    renderNotReady();
-  }
-}
-
-function renderVerify(){
-  var it=selId;
-  app.innerHTML=
-    '<div class="form-view active">'+
-      '<div class="form-top">'+
-        '<div class="back" onclick="renderHome()">‹</div>'+
-        '<div class="ftitle"><h2>身份验证</h2><div class="tag">'+it.icon+' '+it.label+'</div></div>'+
-      '</div>'+
-      '<div class="form-body">'+
-        '<div class="f-card">'+
-          '<div class="f-row"><label>🆔 请输入工号<span class="req">*</span></label><input type="text" id="verify_gh" placeholder="请输入工号" onkeydown="if(event.key===\'Enter\')verifyGh()"></div>'+
-          '<div id="verify_msg" style="font-size:12px;margin-top:6px;display:none"></div>'+
-        '</div>'+
-        '<button class="submit-btn" onclick="verifyGh()" style="margin-top:8px">验证并进入报名</button>'+
-      '</div>'+
-    '</div>'+footer();
-  window.scrollTo(0,0);
-  var inp=document.getElementById("verify_gh");
-  if(inp)inp.focus();
-}
-
-function verifyGh(){
-  var gh=document.getElementById("verify_gh").value.trim();
-  var msg=document.getElementById("verify_msg");
-  if(!gh){
-    msg.style.display="block";
-    msg.style.color="#e8455c";
-    msg.textContent="请输入工号";
-    return;
-  }
-  var list=whitelists[selId.key];
-  if(list.indexOf(gh)>-1){
-    renderForm();
-  }else{
-    msg.style.display="block";
-    msg.style.color="#e8455c";
-    msg.textContent="⚠ 您的工号不在"+selId.label+"名单中，请选择其他入口";
-  }
-}
-
-function renderNotReady(){
-  var it=selId;
-  app.innerHTML=
-    '<div class="form-view active">'+
-      '<div class="form-top">'+
-        '<div class="back" onclick="renderHome()">‹</div>'+
-        '<div class="ftitle"><h2>名单确认中</h2><div class="tag">'+it.icon+' '+it.label+'</div></div>'+
-      '</div>'+
-      '<div class="form-body">'+
-        '<div class="f-card" style="text-align:center;padding:30px 16px">'+
-          '<div style="font-size:40px;margin-bottom:12px">⏳</div>'+
-          '<div style="font-size:14px;color:#666">该入口名单确认中，暂未开放报名</div>'+
-          '<div style="font-size:12px;color:#aaa;margin-top:6px">请稍后再试或联系主办方</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+footer();
-  window.scrollTo(0,0);
+  renderForm();
 }
 
 function renderForm(){
@@ -235,6 +166,7 @@ function renderForm(){
         '<div class="ftitle"><h2>报名登记</h2><div class="tag">'+it.icon+' '+it.label+'</div></div>'+
       '</div>'+
       '<div class="form-body">'+
+        (it.req?'<div class="req-box"><div class="req-title">📋 报名要求</div><div class="req-text">'+it.req+'</div></div>':'')+
         '<div class="f-card">'+
           '<div class="f-row"><label>1. 姓名<span class="req">*</span></label><input type="text" id="f_name" placeholder="请输入姓名"></div>'+
           '<div class="f-row"><label>2. 工号<span class="req">*</span></label><input type="text" id="f_gh" placeholder="请输入工号" onblur="checkGh(this)"><div class="tip">每人仅可报名一次，请确认工号无误</div><div id="gh_msg" style="font-size:11px;margin-top:3px;display:none"></div></div>'+
