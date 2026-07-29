@@ -11,16 +11,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 #app{max-width:480px;margin:0 auto;min-height:100vh;background:#eef1f6;position:relative}
 
 /* ===== Hero ===== */
-.hero{position:relative;overflow:hidden;background:linear-gradient(160deg,#0a1e3f 0%,#132f5c 40%,#1a4580 100%);padding:36px 24px 32px;text-align:center}
-.hero::before{content:"";position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(218,165,50,.12) 0%,transparent 70%)}
-.hero::after{content:"";position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(42,120,200,.15) 0%,transparent 70%)}
-.hero .main-title{font-size:38px;font-weight:800;letter-spacing:3px;background:linear-gradient(135deg,#e8c878 0%,#f5d99a 50%,#daa520 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;position:relative;z-index:1}
-.hero .sub-title{font-size:16px;font-weight:600;color:#fff;margin-top:8px;letter-spacing:1px;position:relative;z-index:1}
-.hero .subtitle{font-size:12px;color:rgba(255,255,255,.55);margin-top:8px;position:relative;z-index:1}
-.hero .info{margin-top:14px;position:relative;z-index:1;display:flex;flex-direction:column;gap:4px}
-.hero .info-row{display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:rgba(255,255,255,.75)}
-.hero .info-row .ico{font-size:14px}
-.hero .line{width:40px;height:2px;background:linear-gradient(90deg,#daa520,#e8c878);margin:14px auto 0;position:relative;z-index:1}
+.hero{position:relative;overflow:hidden;background:url('zhuk.jpg') no-repeat center top/cover;min-height:240px}
 
 /* ===== Section ======
 .section-label{display:flex;align-items:center;gap:8px;padding:22px 20px 14px;font-size:14px;font-weight:600;color:#1a4580}
@@ -133,15 +124,7 @@ function renderHome(){
     '</div>'
   }).join("");
   app.innerHTML=
-    '<div class="hero">'+
-      '<div class="main-title">智创2026</div>'+
-      '<div class="sub-title">房产新媒体领航者峰会</div>'+
-      '<div class="line"></div>'+
-      '<div class="info">'+
-        '<div class="info-row"><span class="ico">📅</span> 2026年8月18日-19日</div>'+
-        '<div class="info-row"><span class="ico">📍</span> 楚世家华庭酒店 · 三层 · 东湖厅</div>'+
-      '</div>'+
-    '</div>'+
+    '<div class="hero"></div>'+
     '<div class="section-label"><span class="dot"></span>请选择您的报名入口</div>'+
     '<div class="id-grid">'+cards+'</div>'+
     footer();
