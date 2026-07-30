@@ -106,7 +106,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 <div id="app"></div>
 <script>
 var identities=[
-  {key:"galaxy",icon:"🌟",label:"银河达人",cls:"c1",req:"1、完成银河达人绑定\n2、2026年商机量提报/成交提报/粉丝综合排名前80人"},
+  {key:"galaxy",icon:"🌟",label:"银河达人",cls:"c1",req:"1、完成银河达人绑定\n2、2026年商机量提报/成交提报/粉丝综合排名前80人\n月均商机数（具体数据以银河计划系统已提报数据为准）\n账号粉丝（具体数据以银河计划看板为准）"},
   {key:"expand",icon:"🚀",label:"扩展营达人",cls:"c2",req:"1、在营内的贝系门店经纪人，且26年上半年探盘次数≥3次\n2、探盘活动中未出现过违规行为，如使用非本人姓名、系统号、1人多号报名，群内有不良舆论等"},
   {key:"kos",icon:"📱",label:"个人KOS达人",cls:"c3",req:"健康分前40+\n2026年5-6月健康分排名前40名且持续2个月付费运营"},
   {key:"star",icon:"⭐",label:"高星门店",cls:"c4",req:"店东达标\n店东＞6星 且 门店矩阵号个数>5个"},
@@ -150,7 +150,7 @@ function renderForm(){
   var brandOptsHtml=brandOpts.map(function(b){return '<option>'+b+'</option>'}).join("");
   var identityOptsHtml=identityOpts.map(function(i){return '<option>'+i+'</option>'}).join("");
   var timeOptsHtml=timeOpts.map(function(t){return '<option>'+t+'</option>'}).join("");
-  var accountChecksHtml=accountOpts.map(function(a){return '<label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="'+a+'" style="display:none">'+a+'</label>'}).join("");
+  var accountChecksHtml=accountOpts.map(function(a){return '<div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="'+a+'" style="display:none">'+a+'</div>'}).join("");
   app.innerHTML=
     '<div class="form-view active">'+
       '<div class="form-top">'+
