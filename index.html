@@ -129,9 +129,11 @@ var app=document.getElementById("app");
 
 function footer(){return '<div class="footer"><div class="f1">\u6280\u672F\u652F\u6301 gaojie097@ke.com</div><div class="f2">\u5BF9\u5916\u5173\u7CFB\u4E2D\u5FC3</div></div>'}
 
+var FORCE_CLOSED=true;
 var DEADLINE=new Date("2026-08-07T18:00:00+08:00").getTime();
 var STAR_DEADLINE=new Date("2026-08-07T18:00:00+08:00").getTime();
 function isExpired(key){
+  if(FORCE_CLOSED){return true;}
   return Date.now()>DEADLINE;
 }
 function fmtDeadline(key){
