@@ -129,15 +129,13 @@ var app=document.getElementById("app");
 
 function footer(){return '<div class="footer"><div class="f1">\u6280\u672F\u652F\u6301 gaojie097@ke.com</div><div class="f2">\u5BF9\u5916\u5173\u7CFB\u4E2D\u5FC3</div></div>'}
 
-var DEADLINE=new Date("2026-08-05T24:00:00+08:00").getTime();
-var STAR_DEADLINE=new Date("2026-08-07T24:00:00+08:00").getTime();
+var DEADLINE=new Date("2026-08-07T18:00:00+08:00").getTime();
+var STAR_DEADLINE=new Date("2026-08-07T18:00:00+08:00").getTime();
 function isExpired(key){
-  if(key==="star"){return Date.now()>STAR_DEADLINE;}
   return Date.now()>DEADLINE;
 }
 function fmtDeadline(key){
-  if(key==="star"){return "8月7日 24:00";}
-  return "8月5日 24:00";
+  return "8月7日 18:00";
 }
 function renderClosed(key){
   app.innerHTML=
@@ -183,7 +181,7 @@ function renderHome(){
     '</div>'+
     '<div class="id-grid">'+cards+'</div>'+
     '<div class="home-notice"><div class="home-notice-card">'+
-      '<div class="hn-title">报名须知 <span style="float:right;font-size:12px;color:#e74c3c;font-weight:600">高星门店截止：8月7日 24:00</span></div>'+
+      '<div class="hn-title">报名须知 <span style="float:right;font-size:12px;color:#e74c3c;font-weight:600">全部通道截止：8月7日 18:00</span></div>'+
       '<div class="hn-item"><span class="num">①</span>银河达人 A/B 级：完成银河达人绑定，2026 商机 / 成交 / 粉丝综合排名<b>前 80 人</b></div>'+
       '<div class="hn-item"><span class="num">②</span>扩展营成员：在营内的贝系门店经纪人，2026年探盘次数（<b>＞3次</b>）/商机/成交综合排名<b>前30人</b>；探盘活动中未出现过违规行为，如使用非本人姓名、系统号、1人多号报名，群内发布不良舆论等</div>'+
       '<div class="hn-item"><span class="num">③</span>KOS 健康分前 40+：2026 年 5-6 月健康分<b>前 40 名</b>，且连续 <b>2 个月</b>付费运营</div>'+
